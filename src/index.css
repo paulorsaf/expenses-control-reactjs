@@ -47,6 +47,10 @@ button.clear {
   border: none;
   color: white;
 }
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
 button.solid {
   background: white;
   border: none;

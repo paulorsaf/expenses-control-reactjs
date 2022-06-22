@@ -45,9 +45,19 @@ function App() {
           form.password.hasChanged && !form.password.value
             && <div data-testid="password-required">Senha é obrigatória</div>
         }
-        <button type="button" className='clear'>Recuperar senha</button>
-        <button type="button" className='solid'>Entrar</button>
-        <button type="button" className='outline'>Registrar</button>
+        <button type="button" className='clear'
+          data-testid="recover-password-button"
+          disabled={!isEmailValid(form.email.value)}>
+          Recuperar senha
+        </button>
+        <button type="button" className='solid'
+          data-testid="login-button"
+          disabled={!isEmailValid(form.email.value) || !form.password.value}>
+          Entrar
+        </button>
+        <button type="button" className='outline'>
+          Registrar
+        </button>
       </form>
     </main>
   );

@@ -80,4 +80,44 @@ describe('Login', () => {
     expect(requiredError).toBeNull();
   })
 
+  test('given email, when empty, then disable recover password button', () => {
+    render(<App />);
+
+    const recoverPasswordButton = screen.getByTestId('recover-password-button');
+
+    expect(recoverPasswordButton).toBeDisabled();
+  })
+
+  test('given email, when valid, then enable recover password button', () => {
+    render(<App />);
+
+    const email = screen.getByTestId('email');
+    userEvent.type(email, "valid@email.com");
+
+    const recoverPasswordButton = screen.getByTestId('recover-password-button');
+
+    expect(recoverPasswordButton).not.toBeDisabled();
+  })
+
+  test('given form invalid, then disable login button', () => {
+    render(<App />);
+
+    const loginButton = screen.getByTestId('login-button');
+
+    expect(loginButton).toBeDisabled();
+  })
+
+  test('given form valid, then enable login button', () => {
+    render(<App />);
+
+    const email = screen.getByTestId('email');
+    userEvent.type(email, "valid@email.com");
+    const password = screen.getByTestId('password');
+    userEvent.type(password, "anyValue");
+
+    const loginButton = screen.getByTestId('login-button');
+
+    expect(loginButton).not.toBeDisabled();
+  })
+
 })
