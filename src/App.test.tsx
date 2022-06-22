@@ -46,6 +46,17 @@ describe('Login', () => {
     expect(requiredError).not.toBeNull();
   })
 
+  test('given email, when valid, then hide invalid error message', async () => {
+    render(<App />);
+
+    const email = screen.getByTestId('email');
+
+    await userEvent.type(email, "valid@email.com");
+
+    const requiredError = screen.queryByTestId('email-invalid');
+    expect(requiredError).toBeNull();
+  })
+
   test('given password, when empty, then show required error message', async () => {
     render(<App />);
 
