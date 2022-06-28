@@ -14,19 +14,18 @@ export default function ValidationError(props: ValidationErrorProps) {
         return null;
     }
 
-    const error = <div data-testid={props.testId} className='error'>{props.errorMessage}</div>;
+    const error =
+        <div data-testid={props.testId} className='error'>
+            {props.errorMessage}
+        </div>;
 
     if (props.type === 'required') {
         return (
-            props.value ==='' ?
-                error
-                : null
+            props.value === '' ? error : null
         )
     }
 
     return (
-        !isEmailValid(props.value) ?
-            error
-            : null
+        !isEmailValid(props.value) ? error : null
     )
 }

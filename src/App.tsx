@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react';
 import { isEmailValid } from './helpers/EmailHelper';
 import ValidationError from './components/validation-error/ValidationError';
+import './App.css';
 
 function App() {
 
@@ -18,9 +17,13 @@ function App() {
   })
 
   return (
-    <main className='centralize'>
+    <main
+      className='centralize'>
       <form>
-        <input type="email" placeholder='Email' value={form.email.value}
+        <input
+          type="email"
+          placeholder='Email'
+          value={form.email.value}
           onChange={event => setForm({...form, email: {
             hasChanged: true, value: event.target.value
           }})}
@@ -38,7 +41,10 @@ function App() {
           type='email'
           value={form.email.value}/>
         
-        <input type="password" placeholder='Senha' value={form.password.value}
+        <input
+          type="password"
+          placeholder='Senha'
+          value={form.password.value}
           onChange={event => setForm({...form, password: {
             hasChanged: true, value: event.target.value
           }})}
@@ -49,17 +55,24 @@ function App() {
           testId='password-required'
           type='required'
           value={form.password.value}/>
-        <button type="button" className='clear'
+
+        <button
+          type="button"
+          className='clear'
           data-testid="recover-password-button"
           disabled={!isEmailValid(form.email.value)}>
           Recuperar senha
         </button>
-        <button type="button" className='solid'
+        <button
+          type="button"
+          className='solid'
           data-testid="login-button"
           disabled={!isEmailValid(form.email.value) || !form.password.value}>
           Entrar
         </button>
-        <button type="button" className='outline'>
+        <button
+          type="button"
+          className='outline'>
           Registrar
         </button>
       </form>
