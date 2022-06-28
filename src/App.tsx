@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { isEmailValid } from './helpers/EmailHelper';
+import ValidationError from './components/validation-error/ValidationError';
 
 function App() {
 
@@ -15,10 +17,6 @@ function App() {
     }
   })
 
-  const isEmailValid = (email: string) => {
-    return /\S+@\S+\.\S+/.test(email);
-  }
-
   return (
     <main className='centralize'>
       <form>
@@ -27,24 +25,30 @@ function App() {
             hasChanged: true, value: event.target.value
           }})}
           data-testid='email' />
-        {
-          form.email.hasChanged && !form.email.value
-            && <div data-testid="email-required">Email é obrigatório</div>
-        }
-        {
-          form.email.hasChanged && !isEmailValid(form.email.value)
-            && <div data-testid="email-invalid">Email é inválido</div>
-        }
+        <ValidationError
+          hasChanged={form.email.hasChanged}
+          errorMessage='Email é obrigatório'
+          testId='email-required'
+          type='required'
+          value={form.email.value}/>
+        <ValidationError
+          hasChanged={form.email.hasChanged}
+          errorMessage='Email é inválido'
+          testId='email-invalid'
+          type='email'
+          value={form.email.value}/>
         
         <input type="password" placeholder='Senha' value={form.password.value}
           onChange={event => setForm({...form, password: {
             hasChanged: true, value: event.target.value
           }})}
           data-testid="password"/>
-        {
-          form.password.hasChanged && !form.password.value
-            && <div data-testid="password-required">Senha é obrigatória</div>
-        }
+        <ValidationError
+          hasChanged={form.password.hasChanged}
+          errorMessage='Senha é obrigatória'
+          testId='password-required'
+          type='required'
+          value={form.password.value}/>
         <button type="button" className='clear'
           data-testid="recover-password-button"
           disabled={!isEmailValid(form.email.value)}>
