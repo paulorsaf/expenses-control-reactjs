@@ -1,13 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import App from './App';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import LoginPage from './LoginPage';
+import RegisterPage from './../register/RegisterPage';
 
 describe('Login', () => {
 
   describe('given email', () => {
 
     test('when empty, then show required error message', () => {
-      render(<App />);
+      render(<BrowserRouter><LoginPage /></BrowserRouter>);
   
       const email = screen.getByTestId('email');
   
@@ -19,7 +21,7 @@ describe('Login', () => {
     })
   
     test('when has value, then hide required error message', () => {
-      render(<App />);
+      render(<BrowserRouter><LoginPage /></BrowserRouter>);
   
       const email = screen.getByTestId('email');
   
@@ -30,14 +32,14 @@ describe('Login', () => {
     })
   
     test('when field not changed, then hide required error message', () => {
-      render(<App />);
+      render(<BrowserRouter><LoginPage /></BrowserRouter>);
   
       const requiredError = screen.queryByTestId('email-required');
       expect(requiredError).toBeNull();
     })
   
     test('when invalid, then show invalid error message', () => {
-      render(<App />);
+      render(<BrowserRouter><LoginPage /></BrowserRouter>);
   
       const email = screen.getByTestId('email');
   
@@ -48,7 +50,7 @@ describe('Login', () => {
     })
   
     test('when valid, then hide invalid error message', () => {
-      render(<App />);
+      render(<BrowserRouter><LoginPage /></BrowserRouter>);
   
       const email = screen.getByTestId('email');
   
@@ -59,7 +61,7 @@ describe('Login', () => {
     })
 
     test('when empty, then disable recover password button', () => {
-      render(<App />);
+      render(<BrowserRouter><LoginPage /></BrowserRouter>);
   
       const recoverPasswordButton = screen.getByTestId('recover-password-button');
   
@@ -67,7 +69,7 @@ describe('Login', () => {
     })
   
     test('when valid, then enable recover password button', () => {
-      render(<App />);
+      render(<BrowserRouter><LoginPage /></BrowserRouter>);
   
       const email = screen.getByTestId('email');
       userEvent.type(email, "valid@email.com");
@@ -82,7 +84,7 @@ describe('Login', () => {
   describe('given password', () => {
 
     test('when empty, then show required error message', () => {
-      render(<App />);
+      render(<BrowserRouter><LoginPage /></BrowserRouter>);
   
       const password = screen.getByTestId('password');
   
@@ -94,7 +96,7 @@ describe('Login', () => {
     })
   
     test('when has value, then hide required error message', () => {
-      render(<App />);
+      render(<BrowserRouter><LoginPage /></BrowserRouter>);
   
       const password = screen.getByTestId('password');
   
@@ -107,7 +109,7 @@ describe('Login', () => {
   })
 
   test('given form invalid, then disable login button', () => {
-    render(<App />);
+    render(<BrowserRouter><LoginPage /></BrowserRouter>);
 
     const loginButton = screen.getByTestId('login-button');
 
@@ -115,7 +117,7 @@ describe('Login', () => {
   })
 
   test('given form valid, then enable login button', () => {
-    render(<App />);
+    render(<BrowserRouter><LoginPage /></BrowserRouter>);
 
     const email = screen.getByTestId('email');
     userEvent.type(email, "valid@email.com");
@@ -125,6 +127,22 @@ describe('Login', () => {
     const loginButton = screen.getByTestId('login-button');
 
     expect(loginButton).not.toBeDisabled();
+  })
+
+  test('given user clicks on register button, then go to register page', async () => {
+    render(
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<LoginPage />} />
+          <Route path='/register' element={<RegisterPage />} />
+        </Routes>
+      </BrowserRouter>
+    );
+
+    const registerButton = screen.getByTestId('register-button');
+    await userEvent.click(registerButton);
+
+    expect(window.location.pathname).toEqual('/register');
   })
 
 })
