@@ -141,7 +141,7 @@ describe('Login', () => {
   function renderLoginPage() {
     render(
       <BrowserRouter>
-        <Routes>
+        <Routes location={'/'}>
           <Route path='/' element={<LoginPage />} />
           <Route path='/register' element={<RegisterPage />} />
         </Routes>
