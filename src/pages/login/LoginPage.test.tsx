@@ -152,7 +152,7 @@ describe('Login', () => {
     })
 
     test('then show loading', async () => {
-      authService.response = Promise.resolve({} as any);
+      authService.response = new Promise(() => {});
 
       renderPageAndTryToLogin();
   
