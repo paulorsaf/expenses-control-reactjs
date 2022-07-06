@@ -1,10 +1,17 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LoginPage from './LoginPage';
 import RegisterPage from './../register/RegisterPage';
+import AuthService from '../../services/AuthService';
 
 describe('Login', () => {
+
+  let authService: AuthServiceMock;
+
+  beforeEach(() => {
+    authService = new AuthServiceMock();
+  })
 
   describe('given email', () => {
 
@@ -138,15 +145,73 @@ describe('Login', () => {
     expect(window.location.pathname).toEqual('/register');
   })
 
+  test('given user clicks on login button, then call login', async () => {
+    authService.response = Promise.resolve({} as any);
+    
+    renderLoginPage();
+
+    const email = screen.getByTestId('email');
+    userEvent.type(email, "valid@email.com");
+    const password = screen.getByTestId('password');
+    userEvent.type(password, "anyValue");
+
+    const loginButton = screen.getByTestId('login-button');
+    userEvent.click(loginButton);
+
+    await waitFor(() => expect(authService.isLoggingIn).toBeTruthy());
+  })
+
+  test('given user clicks on login button, when success, then go to home page', async () => {
+    authService.response = Promise.resolve({} as any);
+    
+    renderLoginPage();
+
+    const email = screen.getByTestId('email');
+    userEvent.type(email, "valid@email.com");
+    const password = screen.getByTestId('password');
+    userEvent.type(password, "anyValue");
+
+    const loginButton = screen.getByTestId('login-button');
+    userEvent.click(loginButton);
+
+    await waitFor(() => expect(window.location.pathname).toEqual('/home'));
+  })
+
+  test('given user clicks on login button, when fail, then show error message', async () => {
+    authService.response = Promise.reject({message: "error"});
+    
+    renderLoginPage();
+
+    const email = screen.getByTestId('email');
+    userEvent.type(email, "valid@email.com");
+    const password = screen.getByTestId('password');
+    userEvent.type(password, "anyValue");
+
+    const loginButton = screen.getByTestId('login-button');
+    userEvent.click(loginButton);
+
+    expect(await screen.findByTestId('error')).not.toBeNull();
+  })
+
   function renderLoginPage() {
     render(
       <BrowserRouter>
         <Routes location={'/'}>
-          <Route path='/' element={<LoginPage />} />
+          <Route path='/'
+            element={<LoginPage authService={authService as AuthService} />} />
           <Route path='/register' element={<RegisterPage />} />
         </Routes>
       </BrowserRouter>
     );
+  }
+
+  class AuthServiceMock {
+    isLoggingIn = false;
+    response: any;
+    login() {
+      this.isLoggingIn = true;
+      return this.response;
+    }
   }
 
 })
