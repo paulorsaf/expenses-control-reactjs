@@ -150,6 +150,22 @@ describe('Login', () => {
   
       await waitFor(() => expect(authService.isLoggingIn).toBeTruthy());
     })
+
+    test('then show loading', async () => {
+      authService.response = Promise.resolve({} as any);
+
+      renderPageAndTryToLogin();
+  
+      expect(await screen.findByTestId('loading')).not.toBeNull();
+    })
+
+    test('when success, then hide loading', async () => {
+      authService.response = Promise.resolve({} as any);
+
+      renderPageAndTryToLogin();
+  
+      await waitFor(() => expect(screen.queryByTestId('loading')).toBeNull());
+    })
   
     test('when success, then go to home page', async () => {
       authService.response = Promise.resolve({} as any);
@@ -165,6 +181,14 @@ describe('Login', () => {
       renderPageAndTryToLogin();
   
       expect(await screen.findByTestId('error')).not.toBeNull();
+    })
+
+    test('when fail, then hide loading', async () => {
+      authService.response = Promise.reject({message: "error"});
+
+      renderPageAndTryToLogin();
+  
+      await waitFor(() => expect(screen.queryByTestId('loading')).toBeNull());
     })
 
     function renderPageAndTryToLogin() {
