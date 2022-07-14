@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LoginPage from './LoginPage';
 import AuthService from '../../services/AuthService';
+import AuthServiceMock from '../../helpers/mocks/AuthServiceMock';
 
 describe('Login', () => {
 
@@ -10,6 +11,13 @@ describe('Login', () => {
 
   beforeEach(() => {
     authService = new AuthServiceMock();
+  })
+
+  test('given page starts, then hide recover password success message', () => {
+    renderLoginPage();
+
+    expect(screen.queryByTestId('recover-password-success-message'))
+      .toBeNull();
   })
 
   describe('given email', () => {
@@ -152,43 +160,49 @@ describe('Login', () => {
     })
 
     test('then show loading', async () => {
-      authService.response = new Promise(() => {});
-
       renderPageAndTryToLogin();
   
       expect(await screen.findByTestId('loading')).not.toBeNull();
     })
 
-    test('when success, then hide loading', async () => {
-      authService.response = Promise.resolve({} as any);
+    describe('when success', () => {
 
-      renderPageAndTryToLogin();
-  
-      await waitFor(() => expect(screen.queryByTestId('loading')).toBeNull());
-    })
-  
-    test('when success, then go to home page', async () => {
-      authService.response = Promise.resolve({} as any);
+      beforeEach(() => {
+        authService.response = Promise.resolve({} as any);
+      })
 
-      renderPageAndTryToLogin();
-  
-      await waitFor(() => expect(window.location.pathname).toEqual('/home'));
-    })
-  
-    test('when fail, then show error message', async () => {
-      authService.response = Promise.reject({message: "error"});
+      test('then hide loading', async () => {
+        renderPageAndTryToLogin();
+    
+        await waitFor(() => expect(screen.queryByTestId('loading')).toBeNull());
+      })
+    
+      test('then go to home page', async () => {
+        renderPageAndTryToLogin();
+    
+        await waitFor(() => expect(window.location.pathname).toEqual('/home'));
+      })
 
-      renderPageAndTryToLogin();
-  
-      expect(await screen.findByTestId('error')).not.toBeNull();
     })
 
-    test('when fail, then hide loading', async () => {
-      authService.response = Promise.reject({message: "error"});
+    describe('when fail', () => {
 
-      renderPageAndTryToLogin();
+      beforeEach(() => {
+        authService.response = Promise.reject({message: "error"});
+      })
   
-      await waitFor(() => expect(screen.queryByTestId('loading')).toBeNull());
+      test('then show error message', async () => {
+        renderPageAndTryToLogin();
+    
+        expect(await screen.findByTestId('error')).not.toBeNull();
+      })
+  
+      test('then hide loading', async () => {
+        renderPageAndTryToLogin();
+    
+        await waitFor(() => expect(screen.queryByTestId('loading')).toBeNull());
+      })
+
     })
 
     function renderPageAndTryToLogin() {
@@ -202,94 +216,77 @@ describe('Login', () => {
   describe('given user clicks on recover password button', () => {
 
     test('then call recover password', () => {
-      authService.response = new Promise(() => {});
-
-      renderLoginPage();
-
-      const email = screen.getByTestId('email');
-      userEvent.type(email, 'valid@email.com');
-      const recoverPasswordButton = screen.getByTestId('recover-password-button');
-      userEvent.click(recoverPasswordButton);
+      renderPageAndRecoverPassword();
 
       expect(authService.isRecoveringPassword).toBeTruthy();
     })
 
     test('then show loading', async () => {
-      authService.response = new Promise(() => {});
-
-      renderLoginPage();
-
-      const email = screen.getByTestId('email');
-      userEvent.type(email, 'valid@email.com');
-      const recoverPasswordButton = screen.getByTestId('recover-password-button');
-      userEvent.click(recoverPasswordButton);
+      renderPageAndRecoverPassword();
 
       expect(await screen.findByTestId('loading')).not.toBeNull();
     })
 
-    test('when success, then show success message', async () => {
-      authService.response = Promise.resolve({});
+    describe('when success', () => {
 
-      renderLoginPage();
+      beforeEach(() => {
+        authService.response = Promise.resolve({});
+      })
 
-      const email = screen.getByTestId('email');
-      userEvent.type(email, 'valid@email.com');
-      const recoverPasswordButton = screen.getByTestId('recover-password-button');
-      userEvent.click(recoverPasswordButton);
+      test('then show success message', async () => {
+        renderPageAndRecoverPassword();
+  
+        expect(await screen.findByTestId('recover-password-success-message'))
+          .not.toBeNull();
+      })
+  
+      test('then hide loading', async () => {
+        renderPageAndRecoverPassword();
+  
+        await waitFor(() => expect(screen.queryByTestId('loading'))
+          .toBeNull());
+      })
 
-      expect(await screen.findByTestId('recover-password-success-message'))
-        .not.toBeNull();
     })
 
-    test('when success, then hide loading', async () => {
-      authService.response = Promise.resolve({});
+    describe('when fail', () => {
 
-      renderLoginPage();
+      beforeEach(() => {
+        authService.response = Promise.reject({message: "error"});
+      })
 
-      const email = screen.getByTestId('email');
-      userEvent.type(email, 'valid@email.com');
-      const recoverPasswordButton = screen.getByTestId('recover-password-button');
-      userEvent.click(recoverPasswordButton);
+      test('then show error', async () => {
+        renderPageAndRecoverPassword();
+  
+        expect(await screen.findByTestId('error'))
+          .not.toBeNull();
+      })
+  
+      test('then hide loading', async () => {
+        renderPageAndRecoverPassword();
+  
+        await waitFor(() => expect(screen.queryByTestId('loading'))
+          .toBeNull());
+      })
 
-      await waitFor(() => expect(screen.queryByTestId('loading'))
-        .toBeNull());
     })
 
-    test('when fail, then show error', async () => {
-      authService.response = Promise.reject({message: "error"});
-
+    function renderPageAndRecoverPassword() {
       renderLoginPage();
+      fillFormWithEmail();
+      clickOnRecoverPasswordButton();
+    }
 
+    function fillFormWithEmail() {
       const email = screen.getByTestId('email');
       userEvent.type(email, 'valid@email.com');
+    }
+
+    function clickOnRecoverPasswordButton() {
       const recoverPasswordButton = screen.getByTestId('recover-password-button');
       userEvent.click(recoverPasswordButton);
+    }
 
-      expect(await screen.findByTestId('error'))
-        .not.toBeNull();
-    })
-
-    test('when fail, then hide loading', async () => {
-      authService.response = Promise.reject({message: "error"});
-
-      renderLoginPage();
-
-      const email = screen.getByTestId('email');
-      userEvent.type(email, 'valid@email.com');
-      const recoverPasswordButton = screen.getByTestId('recover-password-button');
-      userEvent.click(recoverPasswordButton);
-
-      await waitFor(() => expect(screen.queryByTestId('loading'))
-        .toBeNull());
-    })
-
-  })
-
-  test('given page starts, then hide recover password success message', () => {
-    renderLoginPage();
-
-    expect(screen.queryByTestId('recover-password-success-message'))
-      .toBeNull();
   })
 
   function fillFormWithValidValues() {
@@ -316,21 +313,6 @@ describe('Login', () => {
         </Routes>
       </BrowserRouter>
     );
-  }
-
-  class AuthServiceMock {
-    isLoggingIn = false;
-    isRecoveringPassword = false;
-    response: any;
-
-    login() {
-      this.isLoggingIn = true;
-      return this.response;
-    }
-    recoverPassword(){
-      this.isRecoveringPassword = true;
-      return this.response;
-    }
   }
 
 })
