@@ -43,7 +43,9 @@ function App(props: AppProps) {
             <Route
               path='/register'
               element={
-                <RegisterPage />
+                !user ?
+                  <RegisterPage />
+                  : <Navigate to={'/home'} />
               } />
             <Route
               path='/home'
