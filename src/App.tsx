@@ -22,7 +22,7 @@ function App(props: AppProps) {
         setIsLoadingLoggedUser(false);
         setUser(user);
       })
-      .catch(error => {
+      .catch(() => {
         setIsLoadingLoggedUser(false);
       })
   }, []);
@@ -37,7 +37,7 @@ function App(props: AppProps) {
               path='/'
               element={
                 !user ?
-                  <LoginPage authService={new AuthService()} />
+                  <LoginPage authService={props.authService} />
                   : <Navigate to={'/home'} />
               } />
             <Route
