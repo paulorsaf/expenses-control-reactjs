@@ -26,9 +26,15 @@ function LoginPage(props: LoginPageProps) {
   const [showLoading, setShowLoading] = useState(false);
   const [showRecoverPasswordMessage, setShowRecoverPasswordMessage] = useState(false);
 
-  const login = () => {
+  const startLoadingService = () => {
     setError(null);
     setShowLoading(true);
+    setShowRecoverPasswordMessage(false);
+  }
+
+  const login = () => {
+    startLoadingService();
+
     props.authService.login(
       form.email.value, form.password.value
     ).then(() => {
@@ -41,10 +47,8 @@ function LoginPage(props: LoginPageProps) {
   }
 
   const recoverPassword = () => {
-    setError(null);
-    setShowLoading(true);
-    setShowRecoverPasswordMessage(false);
-    
+    startLoadingService();
+
     props.authService.recoverPassword(
       form.email.value
     ).then(() => {
