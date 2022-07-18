@@ -27,6 +27,7 @@ function LoginPage(props: LoginPageProps) {
   const [showRecoverPasswordMessage, setShowRecoverPasswordMessage] = useState(false);
 
   const login = () => {
+    setError(null);
     setShowLoading(true);
     props.authService.login(
       form.email.value, form.password.value
@@ -40,6 +41,7 @@ function LoginPage(props: LoginPageProps) {
   }
 
   const recoverPassword = () => {
+    setError(null);
     setShowLoading(true);
     props.authService.recoverPassword(
       form.email.value
