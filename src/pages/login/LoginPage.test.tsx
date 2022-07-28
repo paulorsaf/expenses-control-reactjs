@@ -2,8 +2,8 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LoginPage from './LoginPage';
-import AuthService from '../../services/AuthService';
 import AuthServiceMock from '../../helpers/mocks/AuthServiceMock';
+import AuthProvider from '../../contexts/auth/AuthProvider';
 
 describe('Login', () => {
 
@@ -303,15 +303,16 @@ describe('Login', () => {
 
   function renderLoginPage() {
     render(
-      <BrowserRouter>
-        <Routes location={'/'}>
-          <Route path='/'
-            element={
-              <LoginPage
-                authService={authService as any} />
-            } />
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider authService={authService as any}>
+        <BrowserRouter>
+          <Routes location={'/'}>
+            <Route path='/'
+              element={
+                <LoginPage />
+              } />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     );
   }
 
